@@ -17,34 +17,52 @@
 'use strict';
 
 var amqp = require('amqp'),
-    msg = require('msg-util').Message,
     projectUtils = require('./lib/project-utils'),
     config = require('./config'),
     bunyan = require('bunyan'),
-    queue_name = 'project';
+    async = require('async');
 var log = bunyan.createLogger({name: 'user-notification-broker'});
 
-var rabbitmqConnectionOptions =  config.connection;
+var rabbitmqConnectionOptions =  config.connections.messaging;
 var rabbitmqImplOptions = { defaultExchangeName: config.exchange_name };
-var exchangeName = config.exchange_name;
-var exchangeOptions = config.exchange_options;
 var connection = amqp.createConnection(rabbitmqConnectionOptions, rabbitmqImplOptions);
 
 // Wait for connection to become established.
 connection.on('ready', function () {
 
-  connection.queue(queue_name, { passive: true }, function (queue) {
+  connection.queue(config.queue_name, { passive: true }, function (queue) {
     log.info('Queue ' + queue.name + ' is open');
 
     queue.subscribe(function (payload, headers, deliveryInfo, messageObject) {
-    log.info('Got a message with routing key ' + deliveryInfo.routingKey);
-    log.info('messageObject timestamp:' + messageObject.timestamp);
-
-
+      log.info('Got a message with routing key ' + deliveryInfo.routingKey);
+      var payloadMessage = JSON.parse(payload.data);
+      var role = projectUtils.getRole(payloadMessage);
+      if(role){
+        async.waterfall([
+          function(callback){
+            projectUtils.validateMessage(payloadMessage, callback);
+          },
+          function(valid, callback){
+            projectUtils.getServiceAccount(callback);
+          },
+          function(account, callback){
+            projectUtils.getMembersOf(role, account, function(err, results){
+              callback(err, account, results);
+            });
+          },
+          function(account, results, callback){
+            projectUtils.addNewNotification(payload.data, results, callback);
+          }
+          ], function(err, result){
+            if(err){
+              log.error(err);
+            }else{
+              log.info('A notification has arrived.');
+            }
+          });
+        }else{
+          log.error('Role not found.');
+        }
     });
   });
-});
-
-connection.addListener('error', function (e) {
-  throw e;
 });

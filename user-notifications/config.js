@@ -14,10 +14,11 @@
 *#   limitations under the License.
 */
 var config = {
-    connections: {
+  connections: {
     redis: {
       host: 'localhost',
       port: 6379,
+      database: 1
     },
     messaging: {
       host: 'localhost',
@@ -28,6 +29,7 @@ var config = {
    }
   },
   exchange_name: 'notification_exch',
+  queue_name: 'project',
   exchange_options: {
     type: 'topic',
     passive: 'true',
@@ -35,6 +37,9 @@ var config = {
     autodelete: false,
     noDeclare: false,
     comfirm: false
+  },
+  notification: {
+    expiration: '604800'
   }
 };
 

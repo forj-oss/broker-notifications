@@ -16,10 +16,37 @@
 'use strict';
 
 var should = require('chai').should();
+var notificationUtils = require('../lib/project-utils');
+var fs = require('fs');
+var jsonMessage = fs.readFileSync('testMessage.json', 'utf8');
+var config = require('./testConfig');
 
+describe('#Notification', function() {
+  it('adds a new message to redis', function() {
 
-describe('#user-notification', function() {
-  it('first test', function() {
-    expect(true).toBe(false); // TDD: start with a false test
+    notificationUtils.addNewNotification(jsonMessage, config.mails, function(error, stdout) {
+      should.not.exist(error);
+      should.exist(stdout);
+    });
+  });
+});
+
+describe('#Notification', function() {
+  it('gets the LDAP account', function() {
+
+    notificationUtils.getServiceAccount(function(error, stdout) {
+      should.not.exist(error);
+      should.exist(stdout);
+    });
+  });
+});
+
+describe('#Notification', function() {
+  it('gets members from a defined group', function() {
+
+    notificationUtils.getMembersOf(config.role, config.account, function(error, stdout) {
+      should.not.exist(error);
+      should.exist(stdout);
+    });
   });
 });

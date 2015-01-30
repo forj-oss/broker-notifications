@@ -1,0 +1,23 @@
+{
+  "message": {
+    "action": {
+      "context" : "project.create",
+      "ctx_data": {
+        "name" : "The Project Name",
+        "description": "This is the description of the project."
+      }
+    },
+    "ACL": {
+      "user": "user@mydomain.test",
+      "role": "admins"
+    },
+    "debug": true,
+    "log": {
+      "enable": true,
+      "level": "debug",
+      "target":""
+    },
+    "origin": "maestro.ui",
+    "site_id": "14m"
+  }
+}
