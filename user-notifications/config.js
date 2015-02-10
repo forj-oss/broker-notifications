@@ -29,7 +29,7 @@ var config = {
    }
   },
   exchange_name: 'notification_exch',
-  queue_name: 'project',
+  queue_name: 'notification',
   exchange_options: {
     type: 'topic',
     passive: 'true',
