@@ -35,17 +35,23 @@ module.exports = {
       callback(err, null);
     });
 
-    client.select(config.connections.database, function(){
-      membersList.forEach(function(user){
-        var uuidMail = user + uuid.v1();
-        client.set(uuidMail, payload, redis.print);
-        client.EXPIRE([uuidMail, config.notification.expiration], function(err) {
-          if(err){
-            callback(err, null);
-          }
+    client.on('connect', function(err){
+      if (err){
+        callback(err, null);
+        return;
+      }
+      client.select(config.connections.redis.database, function(){
+        membersList.forEach(function(user){
+          var uuidMail = user + uuid.v1();
+          client.set(uuidMail, payload, redis.print);
+          client.EXPIRE([uuidMail, config.notification.expiration], function(err) {
+            if(err){
+              callback(err, null);
+            }
+          });
         });
+        callback(null, true);
       });
-      callback(null, true);
     });
   },
 
