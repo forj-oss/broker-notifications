@@ -51,7 +51,7 @@ connection.on('ready', function () {
             });
           },
           function(account, results, callback){
-            projectUtils.addNewNotification(payload.data, results, callback);
+            projectUtils.addNewNotification(JSON.stringify(payloadMessage), results, callback);
           }
           ], function(err, result){
             if(err){

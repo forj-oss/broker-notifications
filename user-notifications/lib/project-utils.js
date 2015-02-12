@@ -70,7 +70,8 @@ module.exports = {
           target: payload.message.log.target
         },
         origin: payload.message.origin,
-        id: payload.message.site_id
+        id: payload.message.site_id,
+        time_stamp: payload.message.time_stamp
       };
       if(msg.isValid(options)){
         callback(null, true);
