@@ -35,12 +35,11 @@ connection.on('ready', function () {
 
     queue.subscribe(function (payload, headers, deliveryInfo, messageObject) {
       log.info('Got a message with routing key ' + deliveryInfo.routingKey);
-      var payloadMessage = JSON.parse(payload.data);
-      var role = projectUtils.getRole(payloadMessage);
+      var role = projectUtils.getRole(payload);
       if(role){
         async.waterfall([
           function(callback){
-            projectUtils.validateMessage(payloadMessage, callback);
+            projectUtils.validateMessage(payload, callback);
           },
           function(valid, callback){
             projectUtils.getServiceAccount(callback);
@@ -51,7 +50,7 @@ connection.on('ready', function () {
             });
           },
           function(account, results, callback){
-            projectUtils.addNewNotification(JSON.stringify(payloadMessage), results, callback);
+            projectUtils.addNewNotification(JSON.stringify(payload), results, callback);
           }
           ], function(err, result){
             if(err){
