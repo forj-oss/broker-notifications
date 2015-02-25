@@ -18,7 +18,7 @@
 var should = require('chai').should();
 var notificationUtils = require('../lib/project-utils');
 var fs = require('fs');
-var jsonMessage = fs.readFileSync('testMessage.json', 'utf8');
+var jsonMessage = fs.readFileSync('./test/testMessage.json', 'utf8');
 var config = require('./testConfig');
 
 describe('#Notification', function() {

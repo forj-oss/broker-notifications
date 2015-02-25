@@ -57,27 +57,13 @@ module.exports = {
 
   validateMessage: function(payload, callback){
     try{
-      var options = {
-        ctx: payload.message.action.context,
-        name: payload.message.action.ctx_data.name,
-        desc: payload.message.action.ctx_data.description,
-        user: payload.message.ACL.user,
-        role: payload.message.ACL.role,
-        debug: payload.message.debug,
-        log: {
-          enable: payload.message.log.enable,
-          level: payload.message.log.level,
-          target: payload.message.log.target
-        },
-        origin: payload.message.origin,
-        id: payload.message.site_id,
-        time_stamp: payload.message.time_stamp
-      };
-      if(msg.isValid(options)){
-        callback(null, true);
-      }else{
-        callback('Invalid Message.', null);
-      }
+      msg.isValid(payload, function (error){
+        if (error){
+          callback(error, null);
+        }else{
+          callback(null, true);
+        }
+      });
     }catch(e){
       log.error(e);
       callback(e, null);
